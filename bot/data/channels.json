@@ -1,3 +1,17 @@
 {
-    
+    "@JennyslecturesCSIT": {
+        "videos": {
+            "last_checked": "null",
+            "stack": []
+        },
+        "shorts": {
+            "last_checked": "null",
+            "stack": []
+        },
+        "servers": {
+            "discord_channel_Id": [
+                "server"
+            ]
+        }
+    }
 }
