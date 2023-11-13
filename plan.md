@@ -1,23 +1,25 @@
-youtube-notification-bot/
+myproject/
+|-- env/
 |-- bot/
-|   |-- __init__.py
-|   |-- channel_manager.py   # Part 1: Channel Data Management
-|   |-- core_scanner.py      # Part 2: Core Scanner (Java integration can go here)
-|   |-- platform_bridge.py   # Part 3: Platform Bridge Manager
-|
-|-- data/
-|   |-- channels.json        # JSON file for storing channel data
-|
-|-- tests/
-|   |-- __init__.py
-|   |-- test_channel_manager.py
-|   |-- test_core_scanner.py
-|   |-- test_platform_bridge.py
-|
-|-- .gitignore
-|-- README.md
-|-- requirements.txt        # List of project dependencies
-|-- main.py                 # Entry point for the application
+|   |-- youtube-notification-bot/  aka AlertVista-Bot
+|   |   |-- __init__.py
+|   |   |-- channel_manager.py
+|   |   |-- core_scanner.py
+|   |   |-- platform_bridge.py
+|   |
+|   |-- data/
+|   |   |-- channels.json
+|   |
+|   |-- tests/
+|   |   |-- __init__.py
+|   |   |-- test_channel_manager.py
+|   |   |-- test_core_scanner.py
+|   |   |-- test_platform_bridge.py
+|   |
+|   |-- .gitignore
+|   |-- README.md
+|   |-- requirements.txt
+|   |-- main.py
 
 Explanation:
 
