@@ -14,7 +14,7 @@ class run():
     def __init__(self,**kwarg) -> None:
         self.platform=kwarg['server']
         self.ID=kwarg
-    
+        
     def ytJson(self,endpoints):
         try:
             soup=BeautifulSoup(Session().get(endpoints,cookies={'CONSENT':"YES+1"}).text,"html.parser")
@@ -29,9 +29,9 @@ class run():
             return False
         else:
             #return channel ID
-            return(remote_data['header']['c4TabbedHeaderRenderer']['channelHandleText']['runs'][0]['text'])
-
-        pass
+            send=remote_data['header']['c4TabbedHeaderRenderer']['channelHandleText']['runs'][0]['text']
+            return(send)
+        
     def create(self,D):
         try:
             with open("bot/data/channels.json","w")as fs:
@@ -41,22 +41,26 @@ class run():
         except:
             return False
     def nset(self):
-        if("https://www.youtube.com/channel/" in self.ID['curl']or"https://www.youtube.com/" in self.ID['curl']):
-            # link will be validated while getting channelId  
-            status=self.validate(self.ID['curl'])
-            if(status != False):
-                self.ID['ID']=status
-            else:
-                return False
+        if('curl'in self.ID):
+            if("https://www.youtube.com/channel/" in self.ID['curl']or"https://www.youtube.com/" in self.ID['curl']):
+                # link will be validated while getting channelId  
+                status=self.validate(self.ID['curl'])
+                if(status != False):
+                    self.ID['ID']=status
+                else:
+                    return False
         else:
             if(self.ID['ID'][0]!="@"):
                self.ID['ID']=f'@{self.ID['ID']}'
             #break points   
-            if(self.validate(self.ID['ID'])==False):
+            if(self.validate(f'https://www.youtube.com/{self.ID['ID']}')==False):
+                print("checkpost")
+    
                 #here checking if wrong channel then it will terminate everything
                 return False
         ## @@ every thing is already validated
         with open("bot/data/channels.json","r")as fs:
+    
             ofl=loads(fs.read())
             if(self.ID['ID'] not in ofl):
                 print("not found")
@@ -91,4 +95,6 @@ class run():
                 return(False)
             
         
-print(run(server='server',ID="",curl="https://www.youtube.com/@JennyslecturesCSIT").nset())#https://www.youtube.com/@JennyslecturesCSIT
+#print(run(server='server',curl="https://www.youtube.com/@JennyslecturesCSIT").nset())#https://www.youtube.com/@JennyslecturesCSIT
+#print(run(server='server0',ID="@regurmaster3519").nset())
+#print(run(server='server0',curl='https://www.youtube.com/watch?v=HKTyOUx9Wf4').nset())  ~failed for video link
