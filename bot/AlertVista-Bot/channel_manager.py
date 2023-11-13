@@ -11,57 +11,84 @@ from bs4 import BeautifulSoup
 from re import search
 from requests import Session,get
 class run():
-    def __init__(self,platform,**id) -> None:
-        self.platform=platform
-        if("https://www.youtube.com/channel/" in id['curl']or"https://www.youtube.com/" in id['curl']):
-            # link will be validated while getting channelId
-            self.ID=id['curl']
-            return self.validate(self.ID)
-        else:
-            if(id['ID'][0]!="@"):
-               id['ID']=f'@{id['ID']}'
-            self.ID=id['ID']
-            return self.nset(self)
-        #self.set()
+    def __init__(self,**kwarg) -> None:
+        self.platform=kwarg['server']
+        self.ID=kwarg
+    
     def ytJson(self,endpoints):
-        soup=BeautifulSoup(Session().get(endpoints,cookies={'CONSENT':"YES+1"}).text,"html.parser")
-        ndata=search(r"var ytInitialData = ({.*});",str(soup.prettify())).group(1)
-        json_data=loads(ndata)
-        print(json_data)
-        pass
-    def validate(self,url):
         try:
-            status=self.ytJson(url)
+            soup=BeautifulSoup(Session().get(endpoints,cookies={'CONSENT':"YES+1"}).text,"html.parser")
+            ndata=search(r"var ytInitialData = ({.*});",str(soup.prettify())).group(1)
+            return loads(ndata)
         except:
-            return(False)
+            return False
 
-        #here we will pass the link that is possible which is gonna be random pages
+    def validate(self,url):
+        remote_data=self.ytJson(url)
+        if(remote_data==False):
+            return False
+        else:
+            #return channel ID
+            return(remote_data['header']['c4TabbedHeaderRenderer']['channelHandleText']['runs'][0]['text'])
 
         pass
-    def create(self,**kwarg):
+    def create(self,D):
         try:
             with open("bot/data/channels.json","w")as fs:
-                
+                fs.write(dumps(D))
                 fs.close()
             return True
         except:
             return False
     def nset(self):
+        if("https://www.youtube.com/channel/" in self.ID['curl']or"https://www.youtube.com/" in self.ID['curl']):
+            # link will be validated while getting channelId  
+            status=self.validate(self.ID['curl'])
+            if(status != False):
+                self.ID['ID']=status
+            else:
+                return False
+        else:
+            if(self.ID['ID'][0]!="@"):
+               self.ID['ID']=f'@{self.ID['ID']}'
+            #break points   
+            if(self.validate(self.ID['ID'])==False):
+                #here checking if wrong channel then it will terminate everything
+                return False
+        ## @@ every thing is already validated
         with open("bot/data/channels.json","r")as fs:
             ofl=loads(fs.read())
-            if(self.ID not in ofl):
+            if(self.ID['ID'] not in ofl):
                 print("not found")
-                if(self.validate(f'https://www.youtube.com/{self.ID}/videos')!=None or self.validate(f'https://www.youtube.com/{self.ID}/videos')!=False):
-                    return(self.create())
-                #first validate then generate and from validate it will jemp to create itself
-                pass
-            elif(self.ID in ofl):
-                #add the user server details where to send the alert
-                #instead of modifying it here it will send to create using kwarg
-                ofl[f'{self.ID}']['platform']['Discord'].append(f'{self.platform}')
-                self.create()
+                #create whole db
+                ofl[f'{self.ID['ID']}']={
+                    "videos": {
+                            "last_checked": "null",
+                            "stack": []
+                    },
+                    "shorts": {
+                            "last_checked": "null",
+                            "stack": []
+                    },
+                    "servers": {
+                            "discord_channel_Id": [f'{self.platform}']
+                        }
+                }
+                fs.close()
+                return(self.create(ofl))
+            
+            elif(self.ID['ID'] in ofl):
+                #add server   ---done
+                #but if server is also present
+                if(self.platform not in ofl[f'{self.ID['ID']}']['servers']['discord_channel_Id']):
+                    ofl[f'{self.ID['ID']}']['servers']['discord_channel_Id'].append(self.platform)
+                    return(self.create(ofl))
+                fs.close()
+                print("server is present")
                 return(True)
-            fs.close()
-        pass
-    
-run('server',ID="",curl="https://www.youtube.com/@JennyslecturesCSIT")#https://www.youtube.com/@JennyslecturesCSIT
+            else : 
+                fs.close()
+                return(False)
+            
+        
+print(run(server='server',ID="",curl="https://www.youtube.com/@JennyslecturesCSIT").nset())#https://www.youtube.com/@JennyslecturesCSIT
